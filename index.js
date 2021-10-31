@@ -2,8 +2,9 @@ const express = require('express');
 const app = express();
 const { MongoClient } = require('mongodb');
 var cors = require('cors');
+const ObjectId = require('mongodb').ObjectId;
 require('dotenv').config();
-const port = 5000
+const port = process.env.PORT || 5000;
 
 
 //middleware
@@ -20,9 +21,14 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
   try {
     await client.connect();
-    console.log('database connect')
+    console.log('database connect');
+    
+    //Events Collection
     const eventsCollection = client.db("eventsCollection");
     const events = eventsCollection.collection("events");
+
+    //Traveller Collection
+    const traveller = eventsCollection.collection("traveller");
 
     //ADD Events
     app.post('/addEvents', async(req, res)=>{
@@ -31,12 +37,6 @@ async function run() {
       const result = await events.insertOne(addEvents);
       console.log(`A document was inserted with the _id: ${result.insertedId}`);
       res.send(result);
-      // create a document to insert
-      // const doc = {
-      //   title: "Record of a Shriveled Datum",
-      //   content: "No bytes, no problem. Just insert a document, in MongoDB",
-      // }
-      // const result = await haiku.insertOne(doc);
     });
 
     //ALL Events
@@ -44,6 +44,29 @@ async function run() {
       const result = await events.find({}).toArray();
       res.send(result);
     });
+
+    //ADD traveller 
+    app.post('/addTraveller', async (req, res)=>{
+      const addTraveller = req.body;
+      const result = await traveller.insertOne(addTraveller);
+      console.log(`A document was inserted with the _id: ${result.insertedId}`);
+      res.send(result);
+    });
+
+    //ALL traveller
+    app.get('/allTraveller', async(req, res)=>{
+      const result = await traveller.find({}).toArray();
+      res.send(result);
+    });
+
+    app.get('/service/:id', async(req, res)=>{
+      const service = req.params.id;
+      const query = {_id: ObjectId(service)};
+      const result = await events.findOne(query);
+
+      res.send(result)
+    })
+
     
   } finally {
     // await client.close();
@@ -51,8 +74,6 @@ async function run() {
 }
 
 run().catch(console.dir);
-
-
 
 
 app.get('/', (req, res) => {
