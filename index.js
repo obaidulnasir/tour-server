@@ -3,6 +3,7 @@ const app = express();
 const { MongoClient } = require('mongodb');
 var cors = require('cors');
 const ObjectId = require('mongodb').ObjectId;
+const email = require("mongodb").email;
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
@@ -76,7 +77,16 @@ async function run() {
       res.send(result)
       console.log(result);
     });
-    
+    //GET my order
+    app.get('/myOrder/:email', async(req, res)=>{
+      const allMyOrder = req.params.email;
+      const query = {email:allMyOrder}
+      
+      const result = await book.find(query).toArray();
+      console.log(result);
+      console.log(allMyOrder)
+      res.send(result);
+    })
     
   } finally {
     // await client.close();
