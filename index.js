@@ -48,7 +48,13 @@ async function run() {
       const result = await events.find({}).toArray();
       res.send(result);
     });
-
+    //DELETE Events
+    app.delete('/deleteEvent/:id', async (req, res)=>{
+      const deleteEvents = req.params.id;
+      const query = {_id: ObjectId(deleteEvents)};
+      const result = await events.deleteOne(query);
+      res.send(result);
+    })
     //ADD traveller 
     app.post('/addTraveller', async (req, res)=>{
       const addTraveller = req.body;
@@ -75,16 +81,20 @@ async function run() {
       const booking = req.body;
       const result = await book.insertOne(booking);
       res.send(result)
-      console.log(result);
+      
     });
     //GET my order
     app.get('/myOrder/:email', async(req, res)=>{
       const allMyOrder = req.params.email;
       const query = {email:allMyOrder}
-      
       const result = await book.find(query).toArray();
-      console.log(result);
-      console.log(allMyOrder)
+      res.send(result);
+    });
+    //DELETE MY Order
+    app.delete('/deleteOrder/:id', async(req, res)=>{
+      const deleteOrder = req.params.id;
+      const query = {_id: ObjectId(deleteOrder)};
+      const result = await book.deleteOne(query);
       res.send(result);
     })
     
