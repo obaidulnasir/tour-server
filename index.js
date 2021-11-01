@@ -23,12 +23,15 @@ async function run() {
     await client.connect();
     console.log('database connect');
     
-    //Events Collection
+    //Events database
     const eventsCollection = client.db("eventsCollection");
+    //Events Collection
     const events = eventsCollection.collection("events");
-
     //Traveller Collection
     const traveller = eventsCollection.collection("traveller");
+    //Booking Collection
+    const book = eventsCollection.collection("booking");
+
 
     //ADD Events
     app.post('/addEvents', async(req, res)=>{
@@ -58,15 +61,22 @@ async function run() {
       const result = await traveller.find({}).toArray();
       res.send(result);
     });
-
+    //Get single events data
     app.get('/service/:id', async(req, res)=>{
       const service = req.params.id;
       const query = {_id: ObjectId(service)};
       const result = await events.findOne(query);
-
       res.send(result)
-    })
+    });
 
+    //ADD an order in database
+    app.post('/booking', async(req, res)=>{
+      const booking = req.body;
+      const result = await book.insertOne(booking);
+      res.send(result)
+      console.log(result);
+    });
+    
     
   } finally {
     // await client.close();
