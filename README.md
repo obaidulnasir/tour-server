@@ -7,5 +7,7 @@
   <li>Express JS</li>
   <li>Cors</li>
   <li>Dot Env</li>
+  <li>MongoDB</li>
+  <li>Heroku(Live API)</li>
  
  
